@@ -103,7 +103,7 @@ def open_pcap(some_pcap):
         udphdr *udpHdr
         char *data
         char *s
-        int data_len, ip_hdr_len, ether_type, ether_offset, pkt_counter=0,packet_length
+        int data_len, ip_hdr_len, ether_type, ether_offset, pkt_counter=0,packet_length,flag
         DEF MAX_SIZE  = 500000
         long KST_TZ_OFFSET = 9 * 60 * 60 * 1000 * 1000 * 1000
         
@@ -113,7 +113,7 @@ def open_pcap(some_pcap):
                    ('source_port','i8'),('source_ip','a16'), ('dest_port','i8'),('dest_ip','a16')])
         bbo_packed [:] packet_view = packet_info
         bbo packet_interals
-        
+        expiration_dict = dict()
     #set up hdfstore
     h5_filename = some_pcap.split('/')[-1]+'.h5'
     store = pd.HDFStore(h5_filename,'w') #delete old pcap if it already existed
@@ -136,7 +136,8 @@ def open_pcap(some_pcap):
             data = ((<char *> udpHdr) + sizeof(udphdr))
             data_len = (packet_length - sizeof(udphdr) - ip_hdr_len)
             data[data_len] = 0
-            if parse_msg(data,packet_interals)>0:
+            flag = parse_msg(data,packet_interals)
+            if flag==1: #found an a3/b6/g7/b2
                 # *** General Packet Info *** 
                 packet_view[pkt_counter].packet_time = header.ts.tv_sec * 1000000000 +header.ts.tv_usec*1000 + KST_TZ_OFFSET
                 packet_view[pkt_counter].source_port = udpHdr.uh_sport
@@ -161,6 +162,10 @@ def open_pcap(some_pcap):
                 packet_view[pkt_counter].total_volume = packet_interals.total_volume
                 packet_view[pkt_counter].exchange_time = packet_interals.exchange_time
                 pkt_counter+=1
+            elif flag==2: #found an a0
+                python_code = packet_interals.symbol
+                exp_code = python_code[6:8]
+                expiration_dict[exp_code] = str(packet_interals.exchange_time)
         if pkt_counter == MAX_SIZE:
             df = pd.DataFrame(packet_info)
             df.index = df.packet_time.values
@@ -171,5 +176,6 @@ def open_pcap(some_pcap):
     df.index = df.packet_time.values
     del df['packet_time']
     store.append('pcap_data',df,data_columns=['symbol'])
+    store.append('expiry_info',pd.DataFrame(expiration_dict.values(),index=expiration_dict.keys()))
     pcap_close(handle)
     store.close()

@@ -1,0 +1,5 @@
+*.so
+*.si
+build
+*.tmp
+*.h5

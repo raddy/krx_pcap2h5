@@ -6,6 +6,7 @@
 #include "g7parse.h"
 #include "a3parse.h"
 #include "b2parse.h"
+#include "a0parse.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ __BEGIN_DECLS
 #define G7 14151
 #define A3 13121
 #define B2 12866
+#define A0 12353
 
 //Product Type Codes as ushort
 #define FUTURE 12592
@@ -41,6 +43,8 @@ static inline void parse_issue_code(const char * const s,bbo &res){
 	memcpy(res.symbol,s+sizeof(char)*5,sizeof(char)*12);
 	res.symbol[12] = 0;
 }
+
+
 
 static inline int market_type_cash(const char *s){
 	return (s[4] != '4');
@@ -107,6 +111,10 @@ static int parse_msg(const char *s,bbo &result){
 				default:
 					return 0;
 			}
+		case A0:
+			parse_issue_code_a0(s,result);
+			parse_a0(s,result);
+			return 2;
 		default:
 			return 0;
 	}
