@@ -35,3 +35,20 @@ struct bbo{
 	char symbol[13];
 	char msg_type[3];
 };
+
+struct top2{
+	int64_t bid1;
+	int64_t bidsize1;
+	int64_t ask1;
+	int64_t asksize1;
+	int64_t bid2;
+	int64_t bidsize2;
+	int64_t ask2;
+	int64_t asksize2;
+	int64_t tradeprice;
+	int64_t tradesize;
+	int64_t total_volume;
+	int64_t exchange_time;
+	char symbol[13];
+	char msg_type[3];
+};

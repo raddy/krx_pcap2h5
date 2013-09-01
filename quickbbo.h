@@ -34,12 +34,12 @@ static inline uint16 product_type(const char *s){
 	return ((uint16 *)s)[1];
 }
 
-static inline void parse_msg_type(const char * const s,bbo &res){
+static inline void parse_msg_type(const char * const s,top2 &res){
 	memcpy(res.msg_type,s,sizeof(char)*2);
 	res.msg_type[2] = 0;
 }
 
-static inline void parse_issue_code(const char * const s,bbo &res){
+static inline void parse_issue_code(const char * const s,top2 &res){
 	memcpy(res.symbol,s+sizeof(char)*5,sizeof(char)*12);
 	res.symbol[12] = 0;
 }
@@ -55,7 +55,7 @@ static inline int market_type_cash(const char *s){
 	* Just parses B6s for now and 
 
 */
-static int parse_msg(const char *s,bbo &result){
+static int parse_msg(const char *s,top2 &result){
 	//ignore non derivatives md for now
 	if (s[4] != '4')
 		return 0;

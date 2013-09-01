@@ -57,11 +57,15 @@ cdef extern from "netinet/udp.h" nogil:
         unsigned short uh_dport
 
 cdef extern from "quickbbo.h" nogil:
-    struct bbo:
+    struct top2:
         int64_t bid1
         int64_t bidsize1
         int64_t ask1
         int64_t asksize1
+        int64_t bid2
+        int64_t bidsize2
+        int64_t ask2
+        int64_t asksize2
         int64_t tradeprice
         int64_t tradesize
         int64_t total_volume
@@ -69,14 +73,18 @@ cdef extern from "quickbbo.h" nogil:
         char symbol[13]
         char msg_type[3]
         
-    int parse_msg(const_char *s,bbo &result)  
+    int parse_msg(const_char *s,top2 &result)  
 
-cdef packed struct bbo_packed:
+cdef packed struct top2_packed:
         char symbol[13]
         int64_t bid1
         int64_t bidsize1
         int64_t ask1
         int64_t asksize1
+        int64_t bid2
+        int64_t bidsize2
+        int64_t ask2
+        int64_t asksize2
         char msg_type[3]
         int64_t tradeprice
         int64_t tradesize
@@ -108,11 +116,12 @@ def open_pcap(some_pcap):
         long KST_TZ_OFFSET = 9 * 60 * 60 * 1000 * 1000 * 1000
         
         np.ndarray packet_info = np.ndarray((MAX_SIZE,),
-            dtype=[('symbol','a13'),('bid1','i8'),('bidsize1','i8'),('ask1','i8'),('asksize1','i8'),('msg_type','a3'),
+            dtype=[('symbol','a13'),('bid1','i8'),('bidsize1','i8'),('ask1','i8'),('asksize1','i8'),
+                   ('bid2','i8'),('bidsize2','i8'),('ask2','i8'),('asksize2','i8'),('msg_type','a3'),
                    ('tradeprice','i8'),('tradesize','i8'),('total_volume','i8'),('packet_time','i8'),('exchange_time','i8'),
                    ('source_port','i8'),('source_ip','a16'), ('dest_port','i8'),('dest_ip','a16')])
-        bbo_packed [:] packet_view = packet_info
-        bbo packet_interals
+        top2_packed [:] packet_view = packet_info
+        top2 packet_interals
         expiration_dict = dict()
     #set up hdfstore
     h5_filename = some_pcap.split('/')[-1]+'.h5'
@@ -157,6 +166,10 @@ def open_pcap(some_pcap):
                 packet_view[pkt_counter].bidsize1 = packet_interals.bidsize1
                 packet_view[pkt_counter].ask1 = packet_interals.ask1
                 packet_view[pkt_counter].asksize1 = packet_interals.asksize1
+                packet_view[pkt_counter].bid2 = packet_interals.bid2
+                packet_view[pkt_counter].bidsize2 = packet_interals.bidsize2
+                packet_view[pkt_counter].ask2 = packet_interals.ask2
+                packet_view[pkt_counter].asksize2 = packet_interals.asksize2
                 packet_view[pkt_counter].tradeprice = packet_interals.tradeprice
                 packet_view[pkt_counter].tradesize = packet_interals.tradesize
                 packet_view[pkt_counter].total_volume = packet_interals.total_volume
@@ -175,7 +188,10 @@ def open_pcap(some_pcap):
     df = pd.DataFrame(packet_info[:pkt_counter])
     df.index = df.packet_time.values
     del df['packet_time']
+    print 'Appending %d packets to h5 file' % pkt_counter
     store.append('pcap_data',df,data_columns=['symbol'])
-    store.append('expiry_info',pd.DataFrame(expiration_dict.values(),index=expiration_dict.keys()))
+    if len(expiration_dict)>0:
+        store.append('expiry_info',pd.DataFrame(expiration_dict.values(),index=expiration_dict.keys()))
     pcap_close(handle)
+    print store
     store.close()
