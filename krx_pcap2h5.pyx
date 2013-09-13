@@ -53,8 +53,8 @@ cdef extern from "arpa/inet.h" nogil:
 
 cdef extern from "netinet/udp.h" nogil:
     struct udphdr:
-        unsigned short uh_sport
-        unsigned short uh_dport
+        unsigned short source
+        unsigned short dest
 
 cdef extern from "quickbbo.h" nogil:
     struct top2:
@@ -149,8 +149,8 @@ def open_pcap(some_pcap):
             if flag==1: #found an a3/b6/g7/b2
                 # *** General Packet Info *** 
                 packet_view[pkt_counter].packet_time = header.ts.tv_sec * 1000000000 +header.ts.tv_usec*1000 + KST_TZ_OFFSET
-                packet_view[pkt_counter].source_port = udpHdr.uh_sport
-                packet_view[pkt_counter].dest_port = udpHdr.uh_dport
+                packet_view[pkt_counter].source_port = udpHdr.source
+                packet_view[pkt_counter].dest_port = udpHdr.dest
                 #copy ip info in (clunky)
                 s = inet_ntoa(ip_hdr.ip_src)
                 memcpy(packet_view[pkt_counter].source_ip,s,strlen(s))

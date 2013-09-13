@@ -6,11 +6,14 @@ import os,cython
 
 sourcefiles = ['krx_pcap2h5.pyx']
 this_dir = os.path.split(cython.__file__)[0]
-extensions = [
-    Extension("krx_pcap2h5", sourcefiles,
-              libraries=['pcap'],
-              include_dirs=[np.get_include(),this_dir])
-    ]
+print 'This Dir: ', this_dir
 
-setup(cmdclass={'build_ext': build_ext},
-      ext_modules=extensions,language="c++")
+extensions = [
+   Extension("krx_pcap2h5", sourcefiles,
+               library_dirs=['/glt/tools/libpcap-1.1.1/lib'],
+               language='c++',
+               libraries=['pcap'],
+               extra_compile_args=["-I/glt/tools/libpcap-1.1.1/include"],
+               extra_link_args=["-L/glt/tools/libpcap-1.1.1/lib"],
+               include_dirs=[np.get_include(),this_dir]) ]
+setup(cmdclass={'build_ext': build_ext},ext_modules=extensions,language="c++")
