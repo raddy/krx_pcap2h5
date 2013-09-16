@@ -2,6 +2,7 @@
 #define	_QUICKBBO_H_
 
 #include <string.h>
+#include <iostream>
 #include "b6parse.h"
 #include "g7parse.h"
 #include "a3parse.h"
@@ -56,18 +57,30 @@ static inline int market_type_cash(const char *s){
 
 */
 static int parse_msg(const char *s,top2 &result){
+	
+	if (msg_type(s) == 12353)
+		std::cout<<"Found A0!"<<std::endl;
 	//ignore non derivatives md for now
-	if (s[4] != '4')
+	if ((s[4] != '4') && (s[4]!='6'))
 		return 0;
-
+	short commodity_flag = (s[4] == '6');
+	/*if ((s[4]=='7')&&(s[2]=='0')&&(s[3]=='1')){
+		parse_msg_type(s,result);
+		std::cout<<msg_type(s)<<std::endl;
+		parse_issue_code(s,result);
+		std::cout<<result.symbol<<std::endl;
+	}*/
 	parse_msg_type(s,result);
-
+	
 	switch(msg_type(s)){
 		case B6:
 			parse_issue_code(s,result);
 			switch(product_type(s)){
 				case FUTURE:
-					future_b6(s,result);
+					if (commodity_flag>0)
+						commodity_b6(s,result);
+					else
+						future_b6(s,result);
 					return 1;
 				case OPTION:
 					option_b6(s,result);
@@ -79,7 +92,10 @@ static int parse_msg(const char *s,top2 &result){
 			parse_issue_code(s,result);
 			switch(product_type(s)){
 				case FUTURE:
-					future_g7(s,result);
+					if (commodity_flag>0)
+						commodity_g7(s,result);
+					else
+						future_g7(s,result);
 					return 1;
 				case OPTION:
 					option_g7(s,result);
@@ -91,7 +107,10 @@ static int parse_msg(const char *s,top2 &result){
 			parse_issue_code(s,result);
 			switch(product_type(s)){
 				case FUTURE:
-					future_a3(s,result);
+					if (commodity_flag>0)
+						commodity_a3(s,result);
+					else
+						future_a3(s,result);
 					return 1;
 				case OPTION:
 					option_a3(s,result);
@@ -103,7 +122,10 @@ static int parse_msg(const char *s,top2 &result){
 			parse_issue_code(s,result);
 			switch(product_type(s)){
 				case FUTURE:
-					future_b2(s,result);
+					if (commodity_flag>0)
+						commodity_b2(s,result);
+					else
+						future_b2(s,result);
 					return 1;
 				case OPTION:
 					option_b2(s,result);
@@ -112,6 +134,7 @@ static int parse_msg(const char *s,top2 &result){
 					return 0;
 			}
 		case A0:
+			std::cout<<'A0'<<std::endl;
 			parse_issue_code_a0(s,result);
 			parse_a0(s,result);
 			return 2;

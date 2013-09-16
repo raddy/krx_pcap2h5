@@ -4,6 +4,22 @@
 #include "quickutil.h"
 
 //copy pasting is bad for you
+
+static void commodity_g7(const char * const s,top2 &top_md){
+	top_md.bid1 =  atoul_8(s+sizeof(char)*142);
+	top_md.bidsize1 = atoul_6(s+sizeof(char)*150);
+	top_md.ask1 = atoul_8(s+sizeof(char)*223);
+	top_md.asksize1 = atoul_6(s+sizeof(char)*231);
+	top_md.bid2 =  atoul_8(s+sizeof(char)*157);
+	top_md.bidsize2 = atoul_6(s+sizeof(char)*165);
+	top_md.ask2 = atoul_8(s+sizeof(char)*238);
+	top_md.asksize2 = atoul_6(s+sizeof(char)*246);
+	top_md.tradeprice = atoul_8(s+sizeof(char)*21);
+	top_md.tradesize = atoul_6(s+sizeof(char)*29);
+	top_md.total_volume = atoul_7(s+sizeof(char)*97);
+	top_md.exchange_time = atoul_8(s+sizeof(char)*37);
+}
+
 static void future_g7(const char * const s,top2 &top_md){
 	top_md.bid1 =  atoul_5(s+sizeof(char)*103);
 	top_md.bidsize1 = atoul_6(s+sizeof(char)*108);

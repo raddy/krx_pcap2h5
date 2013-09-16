@@ -99,7 +99,7 @@ cdef packed struct top2_packed:
 #let's just ignore non-udp for now
 @cython.cdivision(True)
 @cython.boundscheck(False)
-def open_pcap(some_pcap):
+def open_pcap(some_pcap,starting_time,ending_time):
     cdef:
         char __ebuf[256]
         char *p = some_pcap
@@ -112,9 +112,9 @@ def open_pcap(some_pcap):
         char *data
         char *s
         int data_len, ip_hdr_len, ether_type, ether_offset, pkt_counter=0,packet_length,flag
-        DEF MAX_SIZE  = 500000
+        DEF MAX_SIZE  = 1500000
         long KST_TZ_OFFSET = 9 * 60 * 60 * 1000 * 1000 * 1000
-        
+        long raw_time
         np.ndarray packet_info = np.ndarray((MAX_SIZE,),
             dtype=[('symbol','a13'),('bid1','i8'),('bidsize1','i8'),('ask1','i8'),('asksize1','i8'),
                    ('bid2','i8'),('bidsize2','i8'),('ask2','i8'),('asksize2','i8'),('msg_type','a3'),
@@ -124,12 +124,18 @@ def open_pcap(some_pcap):
         top2 packet_interals
         expiration_dict = dict()
     #set up hdfstore
-    h5_filename = some_pcap.split('/')[-1]+'.h5'
+    #h5_filename = some_pcap.split('/')[-1]+'.h5'
+    h5_filename = pd.Timestamp(starting_time).isoformat('T')+'_'+pd.Timestamp(ending_time).isoformat('T')+'.h5'
     store = pd.HDFStore(h5_filename,'w') #delete old pcap if it already existed
     
     
     while 1:
         packet = pcap_next(handle,&header)
+        raw_time = header.ts.tv_sec * 1000000000 +header.ts.tv_usec*1000 + KST_TZ_OFFSET
+        if raw_time > ending_time:
+            break
+        elif raw_time < starting_time:
+            continue
         if packet is NULL:
             break
         pkt_ptr = <unsigned char *> packet
