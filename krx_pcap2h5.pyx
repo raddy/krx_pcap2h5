@@ -85,6 +85,8 @@ cdef packed struct top2_packed:
         int64_t bidsize2
         int64_t ask2
         int64_t asksize2
+        int64_t total_bids
+        int64_t total_asks
         char msg_type[3]
         int64_t tradeprice
         int64_t tradesize
@@ -117,7 +119,8 @@ def open_pcap(some_pcap,starting_time,ending_time):
         long raw_time
         np.ndarray packet_info = np.ndarray((MAX_SIZE,),
             dtype=[('symbol','a13'),('bid1','i8'),('bidsize1','i8'),('ask1','i8'),('asksize1','i8'),
-                   ('bid2','i8'),('bidsize2','i8'),('ask2','i8'),('asksize2','i8'),('msg_type','a3'),
+                   ('bid2','i8'),('bidsize2','i8'),('ask2','i8'),('asksize2','i8'),
+                   ('total_bids','i8'),('total_asks','i8'),('msg_type','a3'),
                    ('tradeprice','i8'),('tradesize','i8'),('total_volume','i8'),('packet_time','i8'),('exchange_time','i8'),
                    ('source_port','i8'),('source_ip','a16'), ('dest_port','i8'),('dest_ip','a16')])
         top2_packed [:] packet_view = packet_info

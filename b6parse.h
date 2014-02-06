@@ -14,6 +14,10 @@ static void commodity_b6(const char * const s,top2 &top_md){
 	top_md.bidsize2 = atoul_6(s+sizeof(char)*52);
 	top_md.ask2 = atoul_8(s+sizeof(char)*125);
 	top_md.asksize2 = atoul_6(s+sizeof(char)*133);
+	
+	top_md.total_bids = atoul_6(s+sizeof(char)*22);
+	top_md.total_asks = atoul_6(s+sizeof(char)*103);
+
 	top_md.tradeprice = 0;
 	top_md.tradesize = 0;
 	top_md.total_volume = 0;
@@ -30,6 +34,8 @@ static void future_b6(const char * const s,top2 &top_md){
 	top_md.bidsize2 = atoul_6(s+sizeof(char)*45);
 	top_md.ask2 = atoul_5(s+sizeof(char)*106);
 	top_md.asksize2 = atoul_6(s+sizeof(char)*111);
+	top_md.total_bids = atoul_6(s+sizeof(char)*21);
+	top_md.total_asks = atoul_6(s+sizeof(char)*87);
 	top_md.tradeprice = 0;
 	top_md.tradesize = 0;
 	top_md.total_volume = 0;
@@ -45,6 +51,10 @@ static void option_b6(const char * const s,top2 &top_md){
 	top_md.bidsize2 = atoul_7(s+sizeof(char)*46);
 	top_md.ask2 = atoul_5(s+sizeof(char)*108);
 	top_md.asksize2 = atoul_7(s+sizeof(char)*113);
+	top_md.total_bids = atoul_7(s+sizeof(char)*22);
+	top_md.total_asks = atoul_7(s+sizeof(char)*89);
+	top_md.total_bids = 0;
+	top_md.total_asks = 0;
 	top_md.tradeprice = 0;
 	top_md.tradesize = 0;
 	top_md.total_volume = 0;

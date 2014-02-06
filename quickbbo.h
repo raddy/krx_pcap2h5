@@ -2,7 +2,6 @@
 #define	_QUICKBBO_H_
 
 #include <string.h>
-#include <iostream>
 #include "b6parse.h"
 #include "g7parse.h"
 #include "a3parse.h"
@@ -58,8 +57,7 @@ static inline int market_type_cash(const char *s){
 */
 static int parse_msg(const char *s,top2 &result){
 	
-	if (msg_type(s) == 12353)
-		std::cout<<"Found A0!"<<std::endl;
+
 	//ignore non derivatives md for now
 	if ((s[4] != '4') && (s[4]!='6'))
 		return 0;
@@ -134,7 +132,6 @@ static int parse_msg(const char *s,top2 &result){
 					return 0;
 			}
 		case A0:
-			std::cout<<'A0'<<std::endl;
 			parse_issue_code_a0(s,result);
 			parse_a0(s,result);
 			return 2;

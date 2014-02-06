@@ -45,6 +45,8 @@ struct top2{
 	int64_t bidsize2;
 	int64_t ask2;
 	int64_t asksize2;
+	int64_t total_bids;
+	int64_t total_asks;
 	int64_t tradeprice;
 	int64_t tradesize;
 	int64_t total_volume;
