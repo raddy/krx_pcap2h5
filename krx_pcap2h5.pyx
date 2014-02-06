@@ -179,6 +179,8 @@ def open_pcap(some_pcap,starting_time,ending_time):
                 packet_view[pkt_counter].bidsize2 = packet_interals.bidsize2
                 packet_view[pkt_counter].ask2 = packet_interals.ask2
                 packet_view[pkt_counter].asksize2 = packet_interals.asksize2
+                packet_view[pkt_counter].total_bids = packet_interals.total_bids
+                packet_view[pkt_counter].total_asks = packet_interals.total_asks
                 packet_view[pkt_counter].tradeprice = packet_interals.tradeprice
                 packet_view[pkt_counter].tradesize = packet_interals.tradesize
                 packet_view[pkt_counter].total_volume = packet_interals.total_volume
