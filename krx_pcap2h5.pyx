@@ -66,6 +66,8 @@ cdef extern from "quickbbo.h" nogil:
         int64_t bidsize2
         int64_t ask2
         int64_t asksize2
+        int64_t total_bids
+        int64_t total_asks
         int64_t tradeprice
         int64_t tradesize
         int64_t total_volume
@@ -73,7 +75,7 @@ cdef extern from "quickbbo.h" nogil:
         char symbol[13]
         char msg_type[3]
         
-    int parse_msg(const_char *s,top2 &result)  
+    int parse_msg(const_char *s,short exture_plus,top2 &result)  
 
 cdef packed struct top2_packed:
         char symbol[13]
@@ -101,7 +103,7 @@ cdef packed struct top2_packed:
 #let's just ignore non-udp for now
 @cython.cdivision(True)
 @cython.boundscheck(False)
-def open_pcap(some_pcap,starting_time,ending_time):
+def open_pcap(some_pcap,starting_time,ending_time,exture_plus):
     cdef:
         char __ebuf[256]
         char *p = some_pcap
@@ -154,7 +156,7 @@ def open_pcap(some_pcap,starting_time,ending_time):
             data = ((<char *> udpHdr) + sizeof(udphdr))
             data_len = (packet_length - sizeof(udphdr) - ip_hdr_len)
             data[data_len] = 0
-            flag = parse_msg(data,packet_interals)
+            flag = parse_msg(data,exture_plus,packet_interals)
             if flag==1: #found an a3/b6/g7/b2
                 # *** General Packet Info *** 
                 packet_view[pkt_counter].packet_time = header.ts.tv_sec * 1000000000 +header.ts.tv_usec*1000 + KST_TZ_OFFSET

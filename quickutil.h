@@ -1,8 +1,10 @@
 #pragma once
-
-
+#include <stdbool.h>
+#define likely(x)       __builtin_expect((x),1)
+#define unlikely(x)     __builtin_expect((x),0)
 typedef unsigned short uint16;
 typedef long long  int64_t;
+
 
 static inline int64_t atoul_8(const char * const s){
     return (s[0]-'0')*10000000+(s[1]-'0')*1000000+(s[2]-'0')*100000

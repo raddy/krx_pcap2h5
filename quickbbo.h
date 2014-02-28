@@ -55,19 +55,17 @@ static inline int market_type_cash(const char *s){
 	* Just parses B6s for now and 
 
 */
-static int parse_msg(const char *s,top2 &result){
+static int parse_msg(const char *s,short exture_plus,top2 &result){
 	
 
 	//ignore non derivatives md for now
 	if ((s[4] != '4') && (s[4]!='6'))
 		return 0;
 	short commodity_flag = (s[4] == '6');
-	/*if ((s[4]=='7')&&(s[2]=='0')&&(s[3]=='1')){
-		parse_msg_type(s,result);
-		std::cout<<msg_type(s)<<std::endl;
-		parse_issue_code(s,result);
-		std::cout<<result.symbol<<std::endl;
-	}*/
+
+
+	bool exture_p = bool(exture_plus);
+		
 	parse_msg_type(s,result);
 	
 	switch(msg_type(s)){
@@ -76,12 +74,12 @@ static int parse_msg(const char *s,top2 &result){
 			switch(product_type(s)){
 				case FUTURE:
 					if (commodity_flag>0)
-						commodity_b6(s,result);
+						commodity_b6(s,exture_p,result);
 					else
-						future_b6(s,result);
+						future_b6(s,exture_p,result);
 					return 1;
 				case OPTION:
-					option_b6(s,result);
+					option_b6(s,exture_p,result);
 					return 1;
 				default:
 					return 0;
@@ -91,12 +89,12 @@ static int parse_msg(const char *s,top2 &result){
 			switch(product_type(s)){
 				case FUTURE:
 					if (commodity_flag>0)
-						commodity_g7(s,result);
+						commodity_g7(s,exture_p,result);
 					else
-						future_g7(s,result);
+						future_g7(s,exture_p,result);
 					return 1;
 				case OPTION:
-					option_g7(s,result);
+					option_g7(s,exture_p,result);
 					return 1;
 				default:
 					return 0;
@@ -106,12 +104,12 @@ static int parse_msg(const char *s,top2 &result){
 			switch(product_type(s)){
 				case FUTURE:
 					if (commodity_flag>0)
-						commodity_a3(s,result);
+						commodity_a3(s,exture_p,result);
 					else
-						future_a3(s,result);
+						future_a3(s,exture_p,result);
 					return 1;
 				case OPTION:
-					option_a3(s,result);
+					option_a3(s,exture_p,result);
 					return 1;
 				default:
 					return 0;
@@ -121,19 +119,19 @@ static int parse_msg(const char *s,top2 &result){
 			switch(product_type(s)){
 				case FUTURE:
 					if (commodity_flag>0)
-						commodity_b2(s,result);
+						commodity_b2(s,exture_p,result);
 					else
-						future_b2(s,result);
+						future_b2(s,exture_p,result);
 					return 1;
 				case OPTION:
-					option_b2(s,result);
+					option_b2(s,exture_p,result);
 					return 1;
 				default:
 					return 0;
 			}
 		case A0:
 			parse_issue_code_a0(s,result);
-			parse_a0(s,result);
+			parse_a0(s,exture_p,result);
 			return 2;
 		default:
 			return 0;

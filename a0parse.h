@@ -4,8 +4,11 @@
 #include "quickutil.h"
 
 //copy pasting is bad for you
-static void parse_a0(const char * const s,top2 &top_md){
-	top_md.exchange_time = atoul_8(s+sizeof(char)*381);
+static void parse_a0(const char * const s,bool exture_p,top2 &top_md){
+	if (likely(exture_p))
+		top_md.exchange_time = atoul_8(s+sizeof(char)*382);
+	else
+		top_md.exchange_time = atoul_8(s+sizeof(char)*381);
 }
 
 static inline void parse_issue_code_a0(const char * const s,top2 &res){
