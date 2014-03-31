@@ -103,7 +103,7 @@ cdef packed struct top2_packed:
 #let's just ignore non-udp for now
 @cython.cdivision(True)
 @cython.boundscheck(False)
-def open_pcap(some_pcap,starting_time,ending_time,exture_plus):
+def open_pcap(some_pcap,store,starting_time,ending_time,exture_plus=1):
     cdef:
         char __ebuf[256]
         char *p = some_pcap
@@ -130,8 +130,8 @@ def open_pcap(some_pcap,starting_time,ending_time,exture_plus):
         expiration_dict = dict()
     #set up hdfstore
     #h5_filename = some_pcap.split('/')[-1]+'.h5'
-    h5_filename = pd.Timestamp(starting_time).isoformat('T')+'_'+pd.Timestamp(ending_time).isoformat('T')+'.h5'
-    store = pd.HDFStore(h5_filename,'w') #delete old pcap if it already existed
+    #h5_filename = pd.Timestamp(starting_time).isoformat('T')+'_'+pd.Timestamp(ending_time).isoformat('T')+'.h5'
+    #store = pd.HDFStore(h5_filename,'w') #delete old pcap if it already existed
     
     
     while 1:
@@ -187,6 +187,8 @@ def open_pcap(some_pcap,starting_time,ending_time,exture_plus):
                 packet_view[pkt_counter].tradesize = packet_interals.tradesize
                 packet_view[pkt_counter].total_volume = packet_interals.total_volume
                 packet_view[pkt_counter].exchange_time = packet_interals.exchange_time
+                if packet_interals.tradesize<0:
+                    print data
                 pkt_counter+=1
             elif flag==2: #found an a0
                 python_code = packet_interals.symbol
@@ -201,10 +203,8 @@ def open_pcap(some_pcap,starting_time,ending_time,exture_plus):
     df = pd.DataFrame(packet_info[:pkt_counter])
     df.index = df.packet_time.values
     del df['packet_time']
-    print 'Appending %d packets to h5 file' % pkt_counter
     store.append('pcap_data',df,data_columns=['symbol'])
     if len(expiration_dict)>0:
         store.append('expiry_info',pd.DataFrame(expiration_dict.values(),index=expiration_dict.keys()))
     pcap_close(handle)
-    print store
-    store.close()
+    return df.index.values[-1]

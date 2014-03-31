@@ -23,7 +23,7 @@ __BEGIN_DECLS
 //Product Type Codes as ushort
 #define FUTURE 12592
 #define OPTION 13104
-
+#define ELW 12848
 
 
 static inline uint16 msg_type(const char *s){
@@ -59,9 +59,10 @@ static int parse_msg(const char *s,short exture_plus,top2 &result){
 	
 
 	//ignore non derivatives md for now
-	if ((s[4] != '4') && (s[4]!='6'))
+	if ((s[4] != '4') && (s[4]!='6') && s[4]!= '1')
 		return 0;
 	short commodity_flag = (s[4] == '6');
+	short equity_flag = (s[4] == '1');
 
 
 	bool exture_p = bool(exture_plus);
@@ -75,6 +76,8 @@ static int parse_msg(const char *s,short exture_plus,top2 &result){
 				case FUTURE:
 					if (commodity_flag>0)
 						commodity_b6(s,exture_p,result);
+					if (equity_flag>0)
+						return 0;
 					else
 						future_b6(s,exture_p,result);
 					return 1;
@@ -105,11 +108,16 @@ static int parse_msg(const char *s,short exture_plus,top2 &result){
 				case FUTURE:
 					if (commodity_flag>0)
 						commodity_a3(s,exture_p,result);
+					if (equity_flag>0)
+						return 0;
 					else
 						future_a3(s,exture_p,result);
 					return 1;
 				case OPTION:
 					option_a3(s,exture_p,result);
+					return 1;
+				case ELW:
+					elw_a3(s,exture_p,result);
 					return 1;
 				default:
 					return 0;
@@ -120,6 +128,8 @@ static int parse_msg(const char *s,short exture_plus,top2 &result){
 				case FUTURE:
 					if (commodity_flag>0)
 						commodity_b2(s,exture_p,result);
+					if (equity_flag>0)
+						return 0;
 					else
 						future_b2(s,exture_p,result);
 					return 1;

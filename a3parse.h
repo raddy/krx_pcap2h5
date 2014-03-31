@@ -68,5 +68,23 @@ static void option_a3(const char * const s,bool exture_p,top2 &top_md){
 	top_md.exchange_time = atoul_8(s+sizeof(char)*(34+offset));
 }
 
+static void elw_a3(const char * const s,bool exture_p,top2 &top_md){
+
+	top_md.bid1 =  0;
+	top_md.bidsize1 = 0;
+	top_md.ask1 = 0;
+	top_md.asksize1 = 0;
+	top_md.bid2 =  0;
+	top_md.bidsize2 = 0;
+	top_md.ask2 = 0;
+	top_md.asksize2 = 0;
+	top_md.total_bids = 0;
+	top_md.total_asks = 0;
+	top_md.tradeprice = atoul_9(s+sizeof(char)*(34));
+	top_md.tradesize = atoul_10(s+sizeof(char)*(43));
+	top_md.total_volume = atoul_12(s+sizeof(char)*(82));
+	top_md.exchange_time = 0;
+}
+
 
 #endif
