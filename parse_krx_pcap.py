@@ -25,8 +25,10 @@ def rtmain(file_name,start_time,end_time):
     t= start_time
 
     while last_time<stop_time:
-    	last_time = open_pcap(file_name,store,t,t+one_minute,1)
-    	t += one_minute
+    	ut = os.path.getmtime(filename)
+    	ts = pd.Timestamp(ut)
+    	last_time = open_pcap(file_name,store,t,ts,1)
+    	t  = last_time
 		time.sleep(60)
     print store
     store.close()
