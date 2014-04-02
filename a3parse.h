@@ -84,6 +84,10 @@ static void elw_a3(const char * const s,bool exture_p,top2 &top_md){
 	top_md.tradesize = atoul_10(s+sizeof(char)*(43));
 	top_md.total_volume = atoul_12(s+sizeof(char)*(82));
 	top_md.exchange_time = 0;
+
+	int64_t side = atoul_1(s+sizeof(char)*112);
+	if (side == 2)
+		top_md.tradesize *= -1;
 }
 
 

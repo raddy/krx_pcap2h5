@@ -139,6 +139,14 @@ static int parse_msg(const char *s,short exture_plus,top2 &result){
 				default:
 					return 0;
 			}
+		case B7:
+			parse_issue_code(s,result);
+			switch(product_type(s)){
+				case ELW:
+					elw_b7(s,exture_p,result);
+				default:
+					return 0;
+			}
 		case A0:
 			parse_issue_code_a0(s,result);
 			parse_a0(s,exture_p,result);

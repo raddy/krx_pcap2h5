@@ -47,6 +47,10 @@ static inline int64_t atoul_5(const char * const s){
     return (s[0]-'0')*10000+(s[1]-'0')*1000+(s[2]-'0')*100+(s[3]-'0')*10+(s[4]-'0');
 }
 
+static inline int64_t atoul_1(const char * const s){
+    return (s[4]-'0');
+}
+
 struct bbo{
 	int64_t bid1;
 	int64_t bidsize1;
